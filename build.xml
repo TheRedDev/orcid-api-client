@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="orcid-api-client" default="describe" basedir=".">
+<project name="orcid-api-client" default="default" basedir=".">
 	<!-- ====================================================================== 
 	     Builds the orcid-api-client.
 	     
@@ -18,11 +18,15 @@
 	<property name="distribute.dir" location="distribute" />
 	<property name="product.name" value="orcid-api-client" />
 	<property name="release.level" value="0.3" />
+	<property name="jar.file.name"
+	          location="${product.name}-${release.level}.jar" />
 	<property name="distribute.jar.file"
-	          location="${distribute.dir}/${product.name}-${release.level}.jar" />
+	          location="${distribute.dir}/${jar.file.name}" />
 	<property name="distribute.zip.file"
 	          location="${distribute.dir}/${product.name}-${release.level}.zip" />
 
+
+	<target name="default" depends="clean, jar2" description="clean and build jar file"/>
 
 	<!-- ================================= 
           target: describe              
@@ -120,6 +124,16 @@ zip        - Include the JAR file and the dependency JARs into a ZIP file.
 	        depends="compile"
 	        description="Compile and create the JAR file.">
 		<jar destfile="${distribute.jar.file}" basedir="${compiled.dir}">
+		</jar>
+	</target>
+
+	<!-- ================================= 
+          target: jar2              
+         ================================= -->
+	<target name="jar2"
+	        depends="compile"
+	        description="Compile and create the JAR file.">
+		<jar destfile="${jar.file.name}" basedir="${compiled.dir}">
 		</jar>
 	</target>
 
