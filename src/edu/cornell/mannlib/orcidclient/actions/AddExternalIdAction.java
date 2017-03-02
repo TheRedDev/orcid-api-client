@@ -80,6 +80,8 @@ public class AddExternalIdAction {
 			String requestUrl = URIUtils.resolve(baseUri,
 					accessToken.getOrcid() + "/orcid-bio/external-identifiers")
 					.toString();
+			
+			log.debug("Request URL: " + requestUrl);
 
 			OrcidMessage outMessage = buildOutgoingMessage(externalId);
 			String outString = occ.marshall(outMessage);
@@ -106,6 +108,7 @@ public class AddExternalIdAction {
 		} catch (HttpResponseException e) {
 			// Bad status code? Something funky.
 			log.error("HttpResponse status code: " + e.getStatusCode());
+			log.error("HttpResponse message: " + e.getMessage());
 			throw new OrcidClientException(
 					"Failed to add external ID. HTTP status code="
 							+ e.getStatusCode(), e);
