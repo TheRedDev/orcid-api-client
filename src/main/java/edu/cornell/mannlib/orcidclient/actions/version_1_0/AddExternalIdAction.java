@@ -78,6 +78,7 @@ public class AddExternalIdAction implements edu.cornell.mannlib.orcidclient.acti
 
 		try {
 			URI baseUri = new URI(occ.getApiMemberUrl());
+			log.debug("authorizedApiBaseUrl: <"+baseUri+">");
 			String requestUrl = URIUtils.resolve(baseUri,
 					accessToken.getOrcid() + "/orcid-bio/external-identifiers")
 					.toString();
@@ -97,6 +98,7 @@ public class AddExternalIdAction implements edu.cornell.mannlib.orcidclient.acti
 									+ accessToken.getAccessToken())
 					.bodyString(outString,
 							ContentType.APPLICATION_FORM_URLENCODED);
+			log.debug("Request Info: "+request);
 			Response response = request.execute();
 			Content content = response.returnContent();
 			String string = content.asString();
