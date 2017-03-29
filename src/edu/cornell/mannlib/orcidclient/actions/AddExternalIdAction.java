@@ -77,6 +77,7 @@ public class AddExternalIdAction {
 
 		try {
 			URI baseUri = new URI(occ.getSetting(Setting.AUTHORIZED_API_BASE_URL));
+			log.debug("authorizedApiBaseUrl: <"+baseUri+">");
 			String requestUrl = URIUtils.resolve(baseUri,
 					accessToken.getOrcid() + "/orcid-bio/external-identifiers")
 					.toString();
@@ -96,6 +97,7 @@ public class AddExternalIdAction {
 									+ accessToken.getAccessToken())
 					.bodyString(outString,
 							ContentType.APPLICATION_FORM_URLENCODED);
+			log.debug("Request Info: "+request);
 			Response response = request.execute();
 			Content content = response.returnContent();
 			String string = content.asString();
