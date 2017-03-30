@@ -71,12 +71,19 @@ public class AddExternalIdAction {
 	public AddExternalIdAction() {
 		this.occ = OrcidClientContext.getInstance();
 	}
+	
+	private static final String endWithSlash(String s) {
+	  if(!s.endsWith("/")) {
+	    s = s+"/";
+	  }
+	  return s;
+	}
 
 	public OrcidMessage execute(ExternalId externalId, AccessToken accessToken)
 			throws OrcidClientException {
 
 		try {
-			URI baseUri = new URI(occ.getSetting(Setting.AUTHORIZED_API_BASE_URL));
+			URI baseUri = new URI(endWithSlash(occ.getSetting(Setting.AUTHORIZED_API_BASE_URL)));
 			log.debug("authorizedApiBaseUrl: <"+baseUri+">");
 			String requestUrl = URIUtils.resolve(baseUri,
 					accessToken.getOrcid() + "/orcid-bio/external-identifiers")
