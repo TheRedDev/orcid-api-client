@@ -92,7 +92,9 @@ public class AddExternalIdAction implements edu.cornell.mannlib.orcidclient.acti
 			String string = httpEntityAsString(entity);
       StatusLine statusLine = httpResponse.getStatusLine();
 			log.debug("Content from AddExternalID was: " + string);
-      if (statusLine.getStatusCode() >= 300) {
+      if (statusLine.getStatusCode() == 409 && string.contains("of type 'external-identifier' is duplicated")) {
+        log.debug(externalId.getUrl() + " was already linked on orcid profile");
+      } else if (statusLine.getStatusCode() >= 300) {
         throw new HttpResponseException(statusLine.getStatusCode(),
                 statusLine.getReasonPhrase());
       }
