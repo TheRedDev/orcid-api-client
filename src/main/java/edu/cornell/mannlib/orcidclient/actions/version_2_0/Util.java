@@ -1,5 +1,6 @@
 package edu.cornell.mannlib.orcidclient.actions.version_2_0;
 
+import edu.cornell.mannlib.orcidclient.context.OrcidClientContext;
 import edu.cornell.mannlib.orcidclient.model.ExternalIdentifier;
 import edu.cornell.mannlib.orcidclient.model.OrcidBio;
 import edu.cornell.mannlib.orcidclient.model.OrcidId;
@@ -19,6 +20,9 @@ import org.apache.http.util.EntityUtils;
 
 import javax.naming.Name;
 import javax.swing.text.html.parser.Entity;
+
+import static edu.cornell.mannlib.orcidclient.context.OrcidClientContext.Setting.API_ENVIRONMENT;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -107,7 +111,12 @@ public class Util {
                 OrcidId oid = new OrcidId();
 
                 oid.setPath(om.getName().getPath());
-                oid.setUri("http://orcid.org/" + om.getName().getPath());
+                String prefix = "http://";
+                if ("sandbox".equalsIgnoreCase(OrcidClientContext.getInstance().getSetting(API_ENVIRONMENT))) {
+                  prefix += "sandbox.";
+                }
+                prefix += "orcid.org/";
+                oid.setUri(prefix + om.getName().getPath());
                 profile.setOrcidIdentifier(oid);
             }
 
