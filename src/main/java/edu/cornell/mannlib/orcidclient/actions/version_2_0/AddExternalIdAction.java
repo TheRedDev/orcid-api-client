@@ -12,16 +12,23 @@ import edu.cornell.mannlib.orcidclient.responses.message_2_0.OrcidExternalIdenti
 import edu.cornell.mannlib.orcidclient.responses.message_2_0.OrcidString;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.ContentType;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 
 /**
  */
@@ -33,6 +40,18 @@ public class AddExternalIdAction implements edu.cornell.mannlib.orcidclient.acti
 	public AddExternalIdAction() {
 		this.occ = OrcidClientContext.getInstance();
 	}
+	
+	private static String httpEntityAsString(HttpEntity httpEntity) throws IOException {
+    Charset charset = ContentType.getOrDefault(httpEntity).getCharset();
+    if (charset == null) {
+        charset = HTTP.DEF_CONTENT_CHARSET;
+    }
+    try {
+        return new String(EntityUtils.toByteArray(httpEntity), charset.name());
+    } catch (UnsupportedEncodingException ex) {
+        return new String(EntityUtils.toByteArray(httpEntity));
+    }
+}
 
 	@Override
 	public OrcidProfile execute(ExternalId externalId, AccessToken accessToken)
@@ -68,9 +87,15 @@ public class AddExternalIdAction implements edu.cornell.mannlib.orcidclient.acti
 									+ accessToken.getAccessToken())
 					.bodyString(json, ContentType.APPLICATION_FORM_URLENCODED);
 			Response response = request.execute();
-			Content content = response.returnContent();
-			String string = content.asString();
+			HttpResponse httpResponse = response.returnResponse();
+      HttpEntity entity = httpResponse.getEntity();
+			String string = httpEntityAsString(entity);
+      StatusLine statusLine = httpResponse.getStatusLine();
 			log.debug("Content from AddExternalID was: " + string);
+      if (statusLine.getStatusCode() >= 300) {
+        throw new HttpResponseException(statusLine.getStatusCode(),
+                statusLine.getReasonPhrase());
+      }
 
 			ReadProfileAction readAction = new ReadProfileAction();
 			return readAction.execute(accessToken);
@@ -82,7 +107,7 @@ public class AddExternalIdAction implements edu.cornell.mannlib.orcidclient.acti
 			log.error("HttpResponse status code: " + e.getStatusCode());
 			throw new OrcidClientException(
 					"Failed to add external ID. HTTP status code="
-							+ e.getStatusCode(), e);
+							+ e.getStatusCode() + " message="+e.getMessage(), e);
 		} catch (IOException e) {
 			throw new OrcidClientException("Failed to add external ID", e);
 		}
