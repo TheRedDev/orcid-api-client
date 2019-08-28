@@ -7,7 +7,7 @@
 
     <groupId>org.vivoweb</groupId>
     <artifactId>orcid-api-client</artifactId>
-    <version>0.6.2.1</version>
+    <version>0.6.2.2</version>
     <packaging>jar</packaging>
 
     <name>ORCiD Client API</name>

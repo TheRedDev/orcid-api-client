@@ -94,7 +94,7 @@ public class Util {
                 OrcidId oid = new OrcidId();
 
                 oid.setPath(om.getName().getPath());
-                String prefix = "https://";
+                String prefix = "http://";
                 if ("sandbox".equalsIgnoreCase(OrcidClientContext.getInstance().getSetting(API_ENVIRONMENT))) {
                   prefix += "sandbox.";
                 }
